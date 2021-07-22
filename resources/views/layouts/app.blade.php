@@ -70,6 +70,9 @@
                                     </form>
                                 </div>
                             </li>
+                            {{-- <li class="nav-item">
+                                <a class="nav-link" href="{{ route('task.create') }}">{{ __('Dodaj zadanie') }}</a>
+                            </li> --}}
                         @endguest
                     </ul>
                 </div>
