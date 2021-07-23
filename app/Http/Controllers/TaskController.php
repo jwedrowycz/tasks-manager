@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TaskCollection;
+use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -9,12 +11,12 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return Task::all();
+        return TaskResource::collection(Task::all());
     }
 
-    public function show(Task $task)
+    public function show($id)
     {
-        return $task;
+        return new TaskResource(Task::findOrFail($id));
     }
 
     public function store(Request $request)
