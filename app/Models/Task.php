@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use Carbon\Carbon;
+use DateTimeInterface;
 
 class Task extends Model
 {
@@ -16,7 +18,7 @@ class Task extends Model
         'start',
         'expected_end',
         'end',
-        'registered_by',
+        'user_id',
         'is_active',
     ];
 
@@ -24,5 +26,5 @@ class Task extends Model
     {
         return $this->belongsTo(User::class);
     }
-
+   
 }

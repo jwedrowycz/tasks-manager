@@ -23,7 +23,7 @@ class CreateTasksTable extends Migration
             $table->boolean('is_private');
             $table->datetime('expected_end');
             $table->boolean('is_active');
-            $table->foreignId('registered_by')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users');
         });
     }
 
