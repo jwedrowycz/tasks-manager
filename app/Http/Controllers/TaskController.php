@@ -25,12 +25,12 @@ class TaskController extends Controller
         $task = Task::create([
             'title'        => $request->title,
             'description'  => $request->description,
-            'start'        => Carbon::now(),
-            'end'          => Carbon::now(),
+            'start'        => date('Y-m-d H:i:s'),
+            'end'          => date('Y-m-d H:i:s'),
             'is_private'   => false,
-            'expected_end' => Carbon::now(),
-            'created_at'   => date('d-m-Y H:i', strtotime($this->created_at)),
-            'user'         => auth()->id()
+            'is_active'    => true,
+            'expected_end' => date('Y-m-d H:i:s'),
+            'user_id'         => auth()->id()
         ]);
 
         return response()->json($task, 201);

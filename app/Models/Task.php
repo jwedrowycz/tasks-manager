@@ -20,6 +20,7 @@ class Task extends Model
         'end',
         'user_id',
         'is_active',
+        'is_private'
     ];
 
     public function user()

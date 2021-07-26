@@ -49,16 +49,18 @@
         },
         methods: {
             submit() {
-                axios.post('/api/tasks', this.fields).then(response => {
-                    this.fields = {};
-                    this.success = true;
-                    this.errors = {};
-                }).catch(error => {
-                    if (error.response.status == 422) {
-                        this.errors = error.response.data.errors;
-                    }
-                    console.log('Error');
-                });
+              axios.get('/sanctum/csrf-cookie').then(response => {
+                  axios.post('/api/tasks', this.fields).then(response => {
+                      this.fields = {};
+                      this.success = true;
+                      this.errors = {};
+                  }).catch(error => {
+                      if (error.response.status == 422) {
+                          this.errors = error.response.data.errors;
+                      }
+                      console.log('Error');
+                  });
+                })
             }
         }
     }

@@ -22,7 +22,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 /* Task */
 Route::get('tasks', [TaskController::class, 'index']);
 Route::get('tasks/{task}', [TaskController::class, 'show']);
-Route::post('tasks', [TaskController::class, 'store']);
+Route::post('tasks', [TaskController::class, 'store'])->middleware('auth:sanctum');
 Route::put('tasks/{task}', [TaskController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('tasks/{task}', [TaskController::class, 'delete'])->middleware('auth:sanctum');
 // Route::resource('tasks', TaskController::class);
+
+Route::post('register', 'App\\Http\\Controllers\\Api\\AuthController@register');
+Route::post('login', 'App\\Http\\Controllers\\Api\\AuthController@login');
