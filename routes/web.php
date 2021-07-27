@@ -17,17 +17,12 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('home');
-});
+})->name('home');
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::group(['prefix'=>'user', 'middleware'=>'auth', 'as'=>'user.'], function () {
     Route::get('/uzytkownik', [UserController::class, 'index'])->name('user');
-//    Route::get('/delete/{opinion_id}', [UserController::class, 'destroy'])->name('destroy');
 });
-
-// Route::get('{any}', function () {
-//     return view('home');
-// })->where('any', '.*');
