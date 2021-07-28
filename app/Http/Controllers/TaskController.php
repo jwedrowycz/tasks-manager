@@ -12,7 +12,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return TaskResource::collection(Task::latest()->get());
+        return TaskResource::collection(Task::latest()->with('user')->get());
     }
 
     public function show($id)
