@@ -12,7 +12,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return TaskResource::collection(Task::latest()->with('user')->get());
+        return TaskResource::collection(Task::active()->public()->latest()->with('user')->get());
     }
 
     public function show($id)
@@ -26,10 +26,9 @@ class TaskController extends Controller
             'title'        => $request->title,
             'description'  => $request->description,
             'start'        => date('Y-m-d H:i:s'),
-            'end'          => date('Y-m-d H:i:s'),
-            'is_private'   => false,
+            'is_private'   => $request->is_private,
             'is_active'    => true,
-            'expected_end' => date('Y-m-d H:i:s'),
+            'expected_end' => $request->expected_end,
             'user_id'         => auth()->id()
         ]);
 
@@ -43,7 +42,7 @@ class TaskController extends Controller
         return response()->json($task, 200);
     }
 
-    public function delete(Task $task)
+    public function destroy(Task $task)
     {
         $task->delete();
 

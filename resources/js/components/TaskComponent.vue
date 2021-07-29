@@ -5,19 +5,24 @@
 
             <b-modal id="modal-1"
                 @ok="handleOk"
-                title="BootstrapVue">
+                title="Dodaj zadanie">
                 <form @submit.prevent="submit">
                     <div class="form-group">
-                        <label for="title" class="col-form-label">Nazwa zadania</label>
+                        <label for="title" class="col-form-label">Nazwa zadania:</label>
                         <input type="text" class="form-control" v-model="fields.title">
                     </div>
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Opis zadania</label>
+                        <label for="message-text" class="col-form-label">Opis zadania:</label>
                         <textarea class="form-control" id="message-text" v-model="fields.description"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Przewidywany termin realizacji</label>
-                        <textarea class="form-control" id="message-text"></textarea>
+                        <label for="message-text" class="col-form-label">Przewidywany termin realizacji:</label>
+                        <b-form-datepicker locale="pl" id="example-datepicker" v-model="fields.expected_end" class="mb-2"></b-form-datepicker>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Widoczność:</label>
+                        <b-form-radio v-model="fields.is_private" name="is_private" value="1">Prywatne</b-form-radio>
+                        <b-form-radio v-model="fields.is_private" name="is_private" value="0">Publiczne</b-form-radio>
                     </div>
                 </form>
             </b-modal>
@@ -28,9 +33,10 @@
                 <th>ID</th>
                 <th>Nazwa zadania</th>
                 <th>Opis</th>
+                <th>Przew. koniec. zad.</th>
                 <th>Utworzono</th>
                 <th>Utworzył</th>
-                <!-- <th>Akcje</th> -->
+                <th>Akcje</th>
             </tr>
             </thead>
             <tbody >
@@ -38,8 +44,13 @@
                     <td>{{ task.id }}</td>
                     <td>{{ task.title }}</td>
                     <td>{{ task.description }}</td>
+                    <td>{{ task.expected_end }}</td>
                     <td>{{ task.created_at }}</td>
                     <td>{{ task.user }}</td>
+                    <td v-if="email == task.email">
+                        <b-button v-b-modal="'confirm-modal' + task.id" variant="danger">Usuń</b-button>
+                        <b-modal :id="'confirm-modal' + task.id" @ok="deleteTask(task.id)" >Czy na pewno chcesz usunąć te zadanie?</b-modal>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -73,9 +84,10 @@
                     });
                     
             },
-            updateTasks: function () {
+            updateTasks() {
                  console.log('huj');
             },
+
             handleSubmit() {
               axios.get('/sanctum/csrf-cookie').then(response => {
                   axios.post('/api/tasks', this.fields).then(response => {
@@ -91,11 +103,17 @@
                   });
                 })
             },
-             handleOk(bvModalEvt) {
+            handleOk(bvModalEvt) {
                 this.handleSubmit();
 
             },
-            
+
+            deleteTask(id) {
+                axios.get('sanctum/csrf-cookie').then(response => {
+                    axios.delete('/api/tasks/'+id);
+                    this.loadTasks();
+                });
+            }
            
         },
     }

@@ -24,7 +24,8 @@ class TaskResource extends JsonResource
             'expected_end' => $this->expected_end,
             'created_at'   => date('d-m-Y H:i', strtotime($this->created_at)),
             'updated_at'   => $this->updated_at,
-            'user'         => $this->user->name
+            'user'         => $this->user->name,
+            'email'        => $this->user->email
         ];
     }
 }

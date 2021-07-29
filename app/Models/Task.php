@@ -27,5 +27,19 @@ class Task extends Model
     {
         return $this->belongsTo(User::class);
     }
-   
+
+    public function getExpectedEndAttribute($value)
+    {
+        return Carbon::parse($value)->format('d-m-Y');
+    }
+    
+    protected function scopeActive()
+    {
+        return $this->where('is_active', true);
+    }    
+
+    protected function scopePublic()
+    {
+        return $this->where('is_private', false);
+    }
 }
