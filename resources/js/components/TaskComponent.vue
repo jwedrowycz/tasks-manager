@@ -39,7 +39,7 @@
                 <th>Akcje</th>
             </tr>
             </thead>
-            <tbody >
+            <tbody is="transition-group" name="list">
                 <tr v-for="task in tasks" :key="task.id" :class="{'spinner-border':loading}">
                     <td>{{ task.id }}</td>
                     <td>{{ task.title }}</td>
@@ -47,8 +47,8 @@
                     <td>{{ task.expected_end }}</td>
                     <td>{{ task.created_at }}</td>
                     <td>{{ task.user.name }}</td>
-                    <td v-if="authUser.email == task.user.email">
-                        <b-button v-b-modal="'confirm-modal' + task.id" variant="danger">Usuń</b-button>
+                    <td>
+                        <b-button v-if="authUser.email == task.user.email" v-b-modal="'confirm-modal' + task.id" variant="danger">Usuń</b-button>
                         <b-modal :id="'confirm-modal' + task.id" @ok="deleteTask(task.id)" >Czy na pewno chcesz usunąć te zadanie?</b-modal>
                     </td>
                 </tr>
