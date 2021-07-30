@@ -16,24 +16,14 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    @auth
+        <script>window.authUser={!! json_encode(auth()->user()); !!};</script>
+    @else
+        <script>window.authUser=null;</script>
+    @endauth
 </head>
 <body>
-    @if (Auth::check())
-    <script>
-        window.Laravel = {!!json_encode([
-            'isLoggedin' => true,
-            'user' => Auth::user(),
-            'email' => Auth::user()->email
-        ])!!}
-    </script>
-    @else
-        <script>
-            window.Laravel = {!!json_encode([
-                'isLoggedin' => false
-            ])!!}
-        </script>
-    @endif
-     
+
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">

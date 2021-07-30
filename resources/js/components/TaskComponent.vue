@@ -46,8 +46,8 @@
                     <td>{{ task.description }}</td>
                     <td>{{ task.expected_end }}</td>
                     <td>{{ task.created_at }}</td>
-                    <td>{{ task.user }}</td>
-                    <td v-if="email == task.email">
+                    <td>{{ task.user.name }}</td>
+                    <td v-if="authUser.email == task.user.email">
                         <b-button v-b-modal="'confirm-modal' + task.id" variant="danger">Usuń</b-button>
                         <b-modal :id="'confirm-modal' + task.id" @ok="deleteTask(task.id)" >Czy na pewno chcesz usunąć te zadanie?</b-modal>
                     </td>
@@ -67,6 +67,7 @@
                 fields: {},
                 success: false,
                 errors: {},
+                authUser: window.authUser
             }
         },
         mounted() {
