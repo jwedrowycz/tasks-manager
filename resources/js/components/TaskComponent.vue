@@ -22,7 +22,7 @@
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Widoczność:</label>
                         <b-form-radio v-model="fields.is_private" name="is_private" value="1">Prywatne</b-form-radio>
-                        <b-form-radio v-model="fields.is_private" name="is_private" value="0">Publiczne</b-form-radio>
+                        <b-form-radio v-model="fields.is_private"  name="is_private" value="0">Publiczne</b-form-radio>
                     </div>
                 </form>
             </b-modal>
@@ -39,8 +39,8 @@
                 <th>Akcje</th>
             </tr>
             </thead>
-            <tbody is="transition-group" name="list">
-                <tr v-for="task in tasks" :key="task.id" :class="{'spinner-border':loading}">
+            <tbody>
+                <tr v-for="task in tasks" :key="task.id" :class="{'spinner-border':loading}" >
                     <td>{{ task.id }}</td>
                     <td>{{ task.title }}</td>
                     <td>{{ task.description }}</td>
@@ -50,11 +50,13 @@
                     <td>
                         <b-button v-if="authUser.email == task.user.email" v-b-modal="'confirm-modal' + task.id" variant="danger">Usuń</b-button>
                         <b-modal :id="'confirm-modal' + task.id" @ok="deleteTask(task.id)" >Czy na pewno chcesz usunąć te zadanie?</b-modal>
+                      
                     </td>
                 </tr>
+                  <b-button @click="makeToast()">Show toast
+                        </b-button>
             </tbody>
         </table>
-        
     </div>
 </template>
 
@@ -67,11 +69,13 @@
                 fields: {},
                 success: false,
                 errors: {},
-                authUser: window.authUser
+                authUser: window.authUser,
+                
             }
         },
         mounted() {
             this.loadTasks();
+            this.fields.is_private = 0;
         },
         methods: {
             loadTasks() {
@@ -113,8 +117,15 @@
                 axios.get('sanctum/csrf-cookie').then(response => {
                     axios.delete('/api/tasks/'+id);
                     this.loadTasks();
+                    
                 });
-            }
+            },
+            makeToast() {
+                this.$root.$bvToast.toast(`This is toast number `, {
+                    title: 'BootstrapVue Toast',
+                    autoHideDelay: 5000,
+                });
+            },
            
         },
     }

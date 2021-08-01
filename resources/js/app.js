@@ -2,7 +2,6 @@ require('./bootstrap');
 
 import Vue from "vue";
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
-import store from './store/index';
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -20,6 +19,5 @@ Vue.prototype.$user = window.User
 
 const app = new Vue({
     el: '#app',
-    store
 });
 
