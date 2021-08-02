@@ -28,7 +28,7 @@ class TaskController extends Controller
         $task = Task::create([
             'title'        => $validated['title'],
             'description'  => $validated['description'],
-            'start'        => date('Y-m-d H:i:s'),
+            'start'        => $validated['start'],
             'is_private'   => $validated['is_private'],
             'is_active'    => true,
             'expected_end' => $validated['expected_end'],

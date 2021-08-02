@@ -6,18 +6,29 @@
             <b-modal id="modal-1"
                 @ok="handleOk"
                 title="Dodaj zadanie">
-                <form @submit.prevent="submit">
+                <form @submit.prevent="handleSubmit">
                     <div class="form-group">
                         <label for="title" class="col-form-label">Nazwa zadania:</label>
                         <input type="text" class="form-control" v-model="fields.title">
+                        <div v-if="errors && errors.title" class="text-danger">{{ errors.title[0] }}</div>
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Opis zadania:</label>
                         <textarea class="form-control" id="message-text" v-model="fields.description"></textarea>
+                        <div v-if="errors && errors.description" class="text-danger">{{ errors.description[0] }}</div>
                     </div>
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Przewidywany termin realizacji:</label>
-                        <b-form-datepicker locale="pl" id="example-datepicker" v-model="fields.expected_end" class="mb-2"></b-form-datepicker>
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="message-text" class="col-form-label">Przewidywany termin realizacji:</label>
+                            <b-form-datepicker locale="pl" id="exp_end-datepicker" v-model="fields.expected_end" class="mb-2"></b-form-datepicker>
+                            <div v-if="errors && errors.expected_end" class="text-danger">{{ errors.expected_end[0] }}</div>
+                        </div>
+                        <div class="col">
+                            <label for="message-text" class="col-form-label">Termin rozpoczęcia:</label>
+                            <b-form-datepicker locale="pl" id="start-datepicker" v-model="fields.start" class="mb-2"></b-form-datepicker>
+                            <div v-if="errors && errors.start" class="text-danger">{{ errors.start[0] }}</div>
+
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Widoczność:</label>
@@ -27,12 +38,13 @@
                 </form>
             </b-modal>
         </div>      
-        <table class="table">
+        <table class="table table-striped" v-columns-resizable>
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Nazwa zadania</th>
                 <th>Opis</th>
+                <th>Rozpoczęcie</th>
                 <th>Przew. koniec. zad.</th>
                 <th>Utworzono</th>
                 <th>Utworzył</th>
@@ -40,18 +52,19 @@
                 <th>Akcje</th>
             </tr>
             </thead>
-            <tbody  :class="{'loading':loading}">
+            <tbody :class="{'loading':loading}">
                 <tr v-for="task in tasks.data" :key="task.id">
                     <td>{{ task.id }}</td>
                     <td>{{ task.title }}</td>
                     <td>{{ task.description }}</td>
+                    <td>{{ task.start }}</td>
                     <td>{{ task.expected_end }}</td>
                     <td>{{ task.created_at }}</td>
                     <td>{{ task.user.name }}</td>
                     <td class="text-center" >
                         <b-icon v-if="task.end != null" icon="check-square" scale="2" variant="success"></b-icon>
                     </td>
-                    <td>
+                    <td class="actions">
                         <b-button v-if="authUser.email == task.user.email && task.end == null" v-b-modal="'complete-modal' + task.id" variant="secondary">Zakończ</b-button>
                         <b-modal :id="'complete-modal' + task.id" @ok="completeTask(task.id)" >Czy na pewno chcesz zakończyć to zadanie?</b-modal>
                         
@@ -101,15 +114,19 @@
                     this.errors = {};
                     this.loadTasks();
                     this.makeToast('Zadanie zostało dodane', 'Menadżer Zadań');
+                    this.fields.is_private = 0;
+                    
                   }).catch(error => {
                       if (error.response.status == 422) {
                           this.errors = error.response.data.errors;
                       }
-                      console.log('Error');
+                        console.log(this.errors)    
+                         console.log('Error');
                   });
                 })
             },
             handleOk(bvModalEvt) {
+                bvModalEvt.preventDefault()
                 this.handleSubmit();
 
             },
@@ -117,6 +134,8 @@
                 axios.get('sanctum/csrf-cookie').then(response => {
                     axios.delete('/api/tasks/'+id);
                     this.loadTasks();
+                    this.makeToast('Zadanie zostało usunięte', 'Menadżer Zadań');
+
                 }).catch(error => {
                     if (error.response.status == 422) {
                         this.errors = error.response.data.errors;
@@ -133,7 +152,7 @@
             makeToast(msg, title) {
                 this.$root.$bvToast.toast(msg, {
                     title: title,
-                    autoHideDelay: 5000,
+                    autoHideDelay: 7000,
                 });
             },
            

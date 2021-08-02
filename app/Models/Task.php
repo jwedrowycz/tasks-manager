@@ -28,6 +28,11 @@ class Task extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function getStartAttribute($value)
+    {
+        return Carbon::parse($value)->format('d-m-Y');
+    }
+
     public function getExpectedEndAttribute($value)
     {
         return Carbon::parse($value)->format('d-m-Y');
