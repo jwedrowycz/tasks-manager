@@ -26,20 +26,27 @@ class StoreTaskRequest extends FormRequest
         return [
             'title' => ['required', 'min:3', 'max:35',],
             'description' => ['required', 'min:3', 'max:100'],
-            'expected_end' => ['date', 'after:yesterday'],
             'is_private' => ['required'],
-            'start' => ['required']
+            'start' => ['required'],
+            'expected_end' => ['date', 'after_or_equal:start'],
         ];
     }
 
 
     public function attributes()
+    {
+        return [
+            'title' => 'tytuł',
+            'description' => 'opis',
+            'expected_end' => 'przewidywany termin realizacji',
+            'start' => 'termin rozpoczęcia',
+        ];
+    }
+
+    public function messages()
 {
     return [
-        'title' => 'tytuł',
-        'description' => 'opis',
-        'expected_end' => 'przewidywany termin realizacji',
-        'start' => 'termin rozpoczęcia'
+        'expected_end.after_or_equal' => 'Termin realizacji nie może być wcześniejszy niż termin rozpoczęcia',
     ];
 }
 }

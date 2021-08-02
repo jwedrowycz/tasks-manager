@@ -1,11 +1,13 @@
 <template>
     <div>   
          <div class="col-md-4 my-3">
-            <b-button v-b-modal.modal-1 variant="primary">Dodaj zadanie</b-button>
+            <b-button v-b-modal.modal-form variant="primary">Dodaj zadanie</b-button>
 
-            <b-modal id="modal-1"
+            <b-modal id="modal-form"
                 @ok="handleOk"
-                title="Dodaj zadanie">
+                title="Dodaj zadanie"
+                ref="modal-form"
+                >
                 <form @submit.prevent="handleSubmit">
                     <div class="form-group">
                         <label for="title" class="col-form-label">Nazwa zadania:</label>
@@ -21,17 +23,15 @@
                     </div>
                     <div class="form-group row">
                         <div class="col">
+                            <label for="message-text" class="col-form-label">Termin rozpoczęcia:</label>
+                            <small class="text-danger">(wymagane)</small>
+                            <b-form-datepicker locale="pl" id="start-datepicker" v-model="fields.start" class="mb-2"></b-form-datepicker>
+                            <div v-if="errors && errors.start" class="text-danger">{{ errors.start[0] }}</div>
+                        </div>
+                        <div class="col">
                             <label for="message-text" class="col-form-label">Przewidywany termin realizacji:</label>
                             <b-form-datepicker locale="pl" id="exp_end-datepicker" v-model="fields.expected_end" class="mb-2"></b-form-datepicker>
                             <div v-if="errors && errors.expected_end" class="text-danger">{{ errors.expected_end[0] }}</div>
-                        </div>
-                        <div class="col">
-                            <label for="message-text" class="col-form-label">Termin rozpoczęcia:</label>
-                        <small class="text-danger">(wymagane)</small>
-
-                            <b-form-datepicker locale="pl" id="start-datepicker" v-model="fields.start" class="mb-2"></b-form-datepicker>
-                            <div v-if="errors && errors.start" class="text-danger">{{ errors.start[0] }}</div>
-
                         </div>
                     </div>
                     <div class="form-group">
@@ -117,15 +117,15 @@
                     this.success = true;
                     this.errors = {};
                     this.loadTasks();
-                    this.makeToast('Zadanie zostało dodane', 'Menadżer Zadań');
+                    this.makeToast('Zadanie zostało dodane', 'Menadżer Zadań', 'success');
                     this.fields.is_private = 0;
-                    
+                    this.$refs['modal-form'].hide();
                   }).catch(error => {
                       if (error.response.status == 422) {
                           this.errors = error.response.data.errors;
+                      } else {
+                            this.makeToast('Wystąpił nieoczekiwany błąd', 'Menadżer Zadań', 'danger');
                       }
-                        console.log(this.errors)    
-                         console.log('Error');
                   });
                 })
             },
@@ -138,7 +138,7 @@
                 axios.get('sanctum/csrf-cookie').then(response => {
                     axios.delete('/api/tasks/'+id);
                     this.loadTasks();
-                    this.makeToast('Zadanie zostało usunięte', 'Menadżer Zadań');
+                    this.makeToast('Zadanie zostało usunięte', 'Menadżer Zadań', 'info');
 
                 }).catch(error => {
                     if (error.response.status == 422) {
@@ -150,13 +150,14 @@
                 axios.get('sanctum/csrf-cookie').then(response => {
                     axios.put('/api/tasks/complete/'+id);
                     this.loadTasks();
-                    this.makeToast('Zadanie zostało zakończone','Menadżer Zadań')
+                    this.makeToast('Zadanie zostało zakończone','Menadżer Zadań', 'success')
                 });
             },
-            makeToast(msg, title) {
+            makeToast(msg, title, variant) {
                 this.$root.$bvToast.toast(msg, {
                     title: title,
                     autoHideDelay: 7000,
+                    variant: variant,
                 });
             },
            
