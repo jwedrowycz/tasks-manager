@@ -14,7 +14,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return TaskResource::collection(Task::active()->public()->latest()->with('user')->paginate(10));
+        return TaskResource::collection(Task::active()->latest()->with('user')->withFilters()->paginate(10));
     }
 
     public function show($id)

@@ -2,6 +2,14 @@
     <div>   
          <div class="col-md-4 my-3">
             <b-button v-b-modal.modal-form variant="primary">Dodaj zadanie</b-button>
+             <b-form-checkbox
+                id="checkbox_only_private"
+                v-model="checked.only_private"
+                value="true"
+                unchecked-value="false"
+                @change="filterTasks">
+                Tylko prywatne zadania
+                </b-form-checkbox>
 
             <b-modal id="modal-form"
                 @ok="handleOk"
@@ -37,7 +45,7 @@
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Widoczność:</label>
                         <b-form-radio v-model="fields.is_private" name="is_private" value="1">Prywatne</b-form-radio>
-                        <b-form-radio v-model="fields.is_private"  name="is_private" value="0">Publiczne</b-form-radio>
+                        <b-form-radio v-model="fields.is_private" name="is_private" value="0">Publiczne</b-form-radio>
                     </div>
                 </form>
             </b-modal>
@@ -91,7 +99,9 @@
                 fields: {},
                 success: false,
                 errors: {},
-                authUser: window.authUser,                
+                authUser: window.authUser,   
+                checked: {
+                },          
             }
         },
         mounted() {
@@ -151,6 +161,11 @@
                     axios.put('/api/tasks/complete/'+id);
                     this.loadTasks();
                     this.makeToast('Zadanie zostało zakończone','Menadżer Zadań', 'success')
+                });
+            },
+            filterTasks(page = 1) {
+                axios.get('api/tasks', {
+                    params: this.checked
                 });
             },
             makeToast(msg, title, variant) {

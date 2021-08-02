@@ -47,4 +47,14 @@ class Task extends Model
     {
         return $this->where('is_private', false);
     }
+
+    protected function scopePrivate()
+    {
+        return $this->where('is_private', true);
+    }
+
+    protected function scopeWithFilters($query)
+    {
+        return $query;
+    }
 }
