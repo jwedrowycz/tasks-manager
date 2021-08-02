@@ -31,4 +31,15 @@ class StoreTaskRequest extends FormRequest
             'start' => ['required']
         ];
     }
+
+
+    public function attributes()
+{
+    return [
+        'title' => 'tytuł',
+        'description' => 'opis',
+        'expected_end' => 'przewidywany termin realizacji',
+        'start' => 'termin rozpoczęcia'
+    ];
+}
 }
