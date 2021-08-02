@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\TaskController;
+use App\Http\Controllers\Api\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +24,7 @@ Route::get('tasks', [TaskController::class, 'index']);
 Route::get('tasks/{task}', [TaskController::class, 'show']);
 Route::post('tasks', [TaskController::class, 'store'])->middleware('auth:sanctum');
 Route::put('tasks/{task}', [TaskController::class, 'update'])->middleware('auth:sanctum');
+Route::put('tasks/complete/{task}', [TaskController::class, 'complete'])->middleware('auth:sanctum');
 Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->middleware('auth:sanctum');
 // Route::resource('tasks', TaskController::class);
 

@@ -10,6 +10,7 @@ window.Vue = require('vue').default;
 
 Vue.component('task-component', require('./components/TaskComponent.vue').default);
 Vue.component('login', require('./components/auth/Login.vue').default);
+Vue.component('pagination', require('laravel-vue-pagination'));
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)

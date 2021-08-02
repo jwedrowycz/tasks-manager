@@ -27,7 +27,7 @@
                 </form>
             </b-modal>
         </div>      
-        <table class="table" >
+        <table class="table">
             <thead>
             <tr>
                 <th>ID</th>
@@ -36,27 +36,32 @@
                 <th>Przew. koniec. zad.</th>
                 <th>Utworzono</th>
                 <th>Utworzył</th>
+                <th>Zakończone</th>
                 <th>Akcje</th>
             </tr>
             </thead>
-            <tbody>
-                <tr v-for="task in tasks" :key="task.id" :class="{'spinner-border':loading}" >
+            <tbody  :class="{'loading':loading}">
+                <tr v-for="task in tasks.data" :key="task.id">
                     <td>{{ task.id }}</td>
                     <td>{{ task.title }}</td>
                     <td>{{ task.description }}</td>
                     <td>{{ task.expected_end }}</td>
                     <td>{{ task.created_at }}</td>
                     <td>{{ task.user.name }}</td>
+                    <td class="text-center" >
+                        <b-icon v-if="task.end != null" icon="check-square" scale="2" variant="success"></b-icon>
+                    </td>
                     <td>
+                        <b-button v-if="authUser.email == task.user.email && task.end == null" v-b-modal="'complete-modal' + task.id" variant="secondary">Zakończ</b-button>
+                        <b-modal :id="'complete-modal' + task.id" @ok="completeTask(task.id)" >Czy na pewno chcesz zakończyć to zadanie?</b-modal>
+                        
                         <b-button v-if="authUser.email == task.user.email" v-b-modal="'confirm-modal' + task.id" variant="danger">Usuń</b-button>
                         <b-modal :id="'confirm-modal' + task.id" @ok="deleteTask(task.id)" >Czy na pewno chcesz usunąć te zadanie?</b-modal>
-                      
                     </td>
                 </tr>
-                  <b-button @click="makeToast()">Show toast
-                        </b-button>
             </tbody>
         </table>
+        <pagination class="mx-3" :data="tasks" @pagination-change-page="loadTasks"></pagination>
     </div>
 </template>
 
@@ -69,8 +74,7 @@
                 fields: {},
                 success: false,
                 errors: {},
-                authUser: window.authUser,
-                
+                authUser: window.authUser,                
             }
         },
         mounted() {
@@ -78,10 +82,10 @@
             this.fields.is_private = 0;
         },
         methods: {
-            loadTasks() {
-                axios.get('/api/tasks')
+            loadTasks(page = 1) {
+                axios.get('/api/tasks?page=' + page)
                     .then((response) => {
-                        this.tasks = response.data.data;
+                        this.tasks = response.data;
                         this.loading = false;
                     })
                     .catch(function (error) {
@@ -89,10 +93,6 @@
                     });
                     
             },
-            updateTasks() {
-                 console.log('huj');
-            },
-
             handleSubmit() {
               axios.get('/sanctum/csrf-cookie').then(response => {
                   axios.post('/api/tasks', this.fields).then(response => {
@@ -100,6 +100,7 @@
                     this.success = true;
                     this.errors = {};
                     this.loadTasks();
+                    this.makeToast('Zadanie zostało dodane', 'Menadżer Zadań');
                   }).catch(error => {
                       if (error.response.status == 422) {
                           this.errors = error.response.data.errors;
@@ -112,17 +113,26 @@
                 this.handleSubmit();
 
             },
-
             deleteTask(id) {
                 axios.get('sanctum/csrf-cookie').then(response => {
                     axios.delete('/api/tasks/'+id);
                     this.loadTasks();
-                    
+                }).catch(error => {
+                    if (error.response.status == 422) {
+                        this.errors = error.response.data.errors;
+                    }
                 });
             },
-            makeToast() {
-                this.$root.$bvToast.toast(`This is toast number `, {
-                    title: 'BootstrapVue Toast',
+            completeTask(id) {
+                axios.get('sanctum/csrf-cookie').then(response => {
+                    axios.put('/api/tasks/complete/'+id);
+                    this.loadTasks();
+                    this.makeToast('Zadanie zostało zakończone','Menadżer Zadań')
+                });
+            },
+            makeToast(msg, title) {
+                this.$root.$bvToast.toast(msg, {
+                    title: title,
                     autoHideDelay: 5000,
                 });
             },

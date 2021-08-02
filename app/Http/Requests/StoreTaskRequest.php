@@ -24,7 +24,10 @@ class StoreTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => ['required', 'min:3', 'max:3',]
+            'title' => ['required', 'min:3', 'max:25',],
+            'description' => ['required', 'min:3', 'max:50'],
+            'expected_end' => ['date', 'after:yesterday'],
+            'is_private' => ['required'],
         ];
     }
 }
