@@ -9,11 +9,13 @@
                 <form @submit.prevent="handleSubmit">
                     <div class="form-group">
                         <label for="title" class="col-form-label">Nazwa zadania:</label>
+                        <small class="text-danger">(wymagane)</small>
                         <input type="text" class="form-control" v-model="fields.title">
                         <div v-if="errors && errors.title" class="text-danger">{{ errors.title[0] }}</div>
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Opis zadania:</label>
+                        <small class="text-danger">(wymagane)</small>
                         <textarea class="form-control" id="message-text" v-model="fields.description"></textarea>
                         <div v-if="errors && errors.description" class="text-danger">{{ errors.description[0] }}</div>
                     </div>
@@ -25,6 +27,8 @@
                         </div>
                         <div class="col">
                             <label for="message-text" class="col-form-label">Termin rozpoczęcia:</label>
+                        <small class="text-danger">(wymagane)</small>
+
                             <b-form-datepicker locale="pl" id="start-datepicker" v-model="fields.start" class="mb-2"></b-form-datepicker>
                             <div v-if="errors && errors.start" class="text-danger">{{ errors.start[0] }}</div>
 
