@@ -3,13 +3,21 @@
          <div class="col-md-4 my-3">
             <b-button v-b-modal.modal-form variant="primary">Dodaj zadanie</b-button>
              <b-form-checkbox
-                id="checkbox_only_private"
-                v-model="checked.only_private"
+                id="checkbox_all_tasks"
+                v-model="filters.all_tasks"
                 value="true"
                 unchecked-value="false"
                 @change="filterTasks">
-                Tylko prywatne zadania
-                </b-form-checkbox>
+                Wszystkie zadania
+            </b-form-checkbox>
+            <b-form-checkbox
+                id="checkbox_only_completed"
+                v-model="filters.completed"
+                value="true"
+                unchecked-value="false"
+                @change="filterTasks">
+                Tylko ukończone zadania
+            </b-form-checkbox>
 
             <b-modal id="modal-form"
                 @ok="handleOk"
@@ -100,7 +108,7 @@
                 success: false,
                 errors: {},
                 authUser: window.authUser,   
-                checked: {
+                filters: {
                 },          
             }
         },
@@ -164,10 +172,16 @@
                 });
             },
             filterTasks(page = 1) {
-                axios.get('api/tasks', {
-                    params: this.checked
-                });
+                this.loading = true;
+                axios.get('api/tasks?page=' + page, {
+                    params: this.filters
+                })
+                .then(response => { 
+                    this.tasks = response.data; 
+                    this.loading = false;
+                    });
             },
+
             makeToast(msg, title, variant) {
                 this.$root.$bvToast.toast(msg, {
                     title: title,

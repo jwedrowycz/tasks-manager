@@ -28,12 +28,12 @@ class Task extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getStartAttribute($value)
+    protected function getStartAttribute($value)
     {
         return Carbon::parse($value)->format('d-m-Y');
     }
 
-    public function getExpectedEndAttribute($value)
+    protected function getExpectedEndAttribute($value)
     {
         return Carbon::parse($value)->format('d-m-Y');
     }
@@ -50,11 +50,28 @@ class Task extends Model
 
     protected function scopePrivate()
     {
-        return $this->where('is_private', true);
+        return $this->where('user_id', auth()->id());
     }
 
     protected function scopeWithFilters($query)
     {
-        return $query;
+        return $query->when(count(request()->query()) > 0, function ($query) {
+            $query->when(request()->query('all_tasks') == "true", function ($query) {
+                $query->where('user_id', '!=', auth()->id());
+            });
+            $query->when(request()->input('completed') == "true", function ($query) {
+                $query->whereNotNull('end');
+            });
+        });
+
+        // $query->when(request()->input('is_private') == false, function ($q) {
+        //     return $q->where('user_id');
+        // });
+        // $query->when(request()->input('completed') == true, function ($q) {
+        //     return $q->whereNotNull('end');
+        // });
+        // $query->when(request()->input('completed') == false, function ($q) {
+        //     return $q->where('end', true);
+        // });
     }
 }
