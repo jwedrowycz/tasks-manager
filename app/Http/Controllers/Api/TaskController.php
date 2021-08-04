@@ -14,7 +14,14 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return TaskResource::collection(Task::active()->latest()->with('user')->withFilters()->paginate(10));
+        if(request()->hasAny('all_tasks', 'completed')) {
+            return TaskResource::collection(Task::active()->latest()->withFilters()->with('user')->paginate(10));
+        } 
+        return TaskResource::collection(Task::active()->latest()->private()->with('user')->paginate(10));
+        
+        // if(count(request()->query()) > 0) {
+        //     return TaskResource::collection(Task::active()->latest()->with('user')->withFilters()->paginate(10));
+        // }
     }
 
     public function show($id)
